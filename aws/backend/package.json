@@ -8,5 +8,11 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1374.0",
+    "moment": "^2.29.4",
+    "underscore": "^1.13.6",
+    "uuidv4": "^6.2.13"
+  }
 }
