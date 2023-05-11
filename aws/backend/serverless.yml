@@ -3,15 +3,12 @@ service: backend
 plugins:
   - serverless-offline
 
-#frameworkVersion: '3'
-
 custom:
   allowedHeaders:
     - Accept
     - Content-Type
     - Content-Length
     - app_user_name
-
 
 provider:
   name: aws
@@ -34,7 +31,7 @@ provider:
 functions:
   add_note:
     handler: api_functions/add_note.handler
-    description: POST /note
+    description: Add new note to database
     events:
       - http:
           path: note
@@ -42,10 +39,9 @@ functions:
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
-
   update_note:
     handler: api_functions/update_note.handler
-    description: PATCH /note
+    description: Update note's data in database
     events:
       - http:
           path: note
@@ -53,21 +49,19 @@ functions:
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
-
   delete_note:
     handler: api_functions/delete_note.handler
-    description: DELETE /note
+    description: Delete note in database
     events:
       - http:
-          path: note/n/{note_id}
+          path: note/t/{time}
           method: delete
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
-
   get_note:
     handler: api_functions/get_note.handler
-    description: GET /note/n/{note_id}
+    description: Show note by id
     events:
       - http:
           path: note/n/{note_id}
@@ -75,10 +69,9 @@ functions:
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
-
   get_notes:
     handler: api_functions/get_notes.handler
-    description: GET /notes
+    description: List all notes in database
     events:
       - http:
           path: notes
@@ -86,7 +79,6 @@ functions:
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
-
 
 resources:
   Resources:
@@ -96,12 +88,12 @@ resources:
       Properties:
         TableName: ${self:provider.environment.NOTES_TABLE}
         AttributeDefinitions:
+          - AttributeName: note_id
+            AttributeType: S
           - AttributeName: user_name
             AttributeType: S
           - AttributeName: time
             AttributeType: N
-          - AttributeName: note_id
-            AttributeType: S
         KeySchema:
           - AttributeName: user_name
             KeyType: HASH
@@ -111,7 +103,7 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         GlobalSecondaryIndexes:
-          - IndexName: note_id-index
+          - IndexName: Index-note_id
             KeySchema:
               - AttributeName: note_id
                 KeyType: HASH
