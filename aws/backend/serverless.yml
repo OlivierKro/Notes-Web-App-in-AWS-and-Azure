@@ -3,17 +3,13 @@ service: backend
 plugins:
   - serverless-offline
 
+#frameworkVersion: '3'
+
 custom:
   allowedHeaders:
     - Accept
     - Content-Type
     - Content-Length
-    - Authorization
-    - X-Amz-Date
-    - X-Api-Key
-    - X-Amz-Security-Token
-    - X-Amz-User-Agent
-    - app_user_id
     - app_user_name
 
 
@@ -23,10 +19,10 @@ provider:
   region: eu-central-1
   stage:  prod
   memorySize: 128
-  timeout:  5
+  timeout:  2
   endpointType: regional
   environment:
-    NOTES_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    NOTES_TABLE: NotesWebApp-Table
   iamRoleStatements:
     - Effect: Allow
       Action: 
@@ -36,8 +32,8 @@ provider:
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.NOTES_TABLE}"
 
 functions:
-  add-note:
-    handler: api/add-note.handler
+  add_note:
+    handler: api_functions/add_note.handler
     description: POST /note
     events:
       - http:
@@ -47,8 +43,8 @@ functions:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
 
-  update-note:
-    handler: api/update-note.handler
+  update_note:
+    handler: api_functions/update_note.handler
     description: PATCH /note
     events:
       - http:
@@ -58,19 +54,19 @@ functions:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
 
-  get-notes:
-    handler: api/get-notes.handler
-    description: GET /notes
+  delete_note:
+    handler: api_functions/delete_note.handler
+    description: DELETE /note
     events:
       - http:
-          path: notes
-          method: get
+          path: note/n/{note_id}
+          method: delete
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
 
-  get-note:
-    handler: api/get-note.handler
+  get_note:
+    handler: api_functions/get_note.handler
     description: GET /note/n/{note_id}
     events:
       - http:
@@ -80,16 +76,17 @@ functions:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
 
-  delete-note:
-    handler: api/delete-note.handler
-    description: DELETE /note
+  get_notes:
+    handler: api_functions/get_notes.handler
+    description: GET /notes
     events:
       - http:
-          path: note/t/{timestamp}
-          method: delete
+          path: notes
+          method: get
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
+
 
 resources:
   Resources:
@@ -99,16 +96,16 @@ resources:
       Properties:
         TableName: ${self:provider.environment.NOTES_TABLE}
         AttributeDefinitions:
-          - AttributeName: user_id
+          - AttributeName: user_name
             AttributeType: S
-          - AttributeName: timestamp
+          - AttributeName: time
             AttributeType: N
           - AttributeName: note_id
             AttributeType: S
         KeySchema:
-          - AttributeName: user_id
+          - AttributeName: user_name
             KeyType: HASH
-          - AttributeName: timestamp
+          - AttributeName: time
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
