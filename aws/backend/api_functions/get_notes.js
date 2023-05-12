@@ -1,11 +1,7 @@
-/**
- * Route: GET /notes
- */
+const util = require('./utility_functions.js');
 
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
-
-const util = require('./util.js');
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.NOTES_TABLE;
@@ -13,7 +9,7 @@ const tableName = process.env.NOTES_TABLE;
 exports.handler = async (event) => {
     try {
         let query = event.queryStringParameters;
-        let limit = query && query.limit ? parseInt(query.limit) : 5;
+        let limit = query && query.limit ? parseInt(query.limit) : 10;
         let user_name = util.getUserName(event.headers);
 
         let params = {
@@ -27,7 +23,6 @@ exports.handler = async (event) => {
         };
 
         let startTime = query && query.start ? parseInt(query.start) : 0;
-
         if(startTime > 0) {
             params.ExclusiveStartKey = {
                 user_name: user_name,
@@ -37,20 +32,26 @@ exports.handler = async (event) => {
 
         let data = await dynamodb.query(params).promise();
 
-        return {
+        const response = {
             statusCode: 200,
             headers: util.getResponseHeaders(),
             body: JSON.stringify(data)
         };
+        return response;
+
     } catch (err) {
         console.log("Error", err);
+        const statusCode = err.statusCode || 500;
+        const headers = util.getResponseHeaders();
+        const body = JSON.stringify({
+            error: err.name || "Exception",
+            message: err.message || "Unknown error"
+        });
+        
         return {
-            statusCode: err.statusCode ? err.statusCode : 500,
-            headers: util.getResponseHeaders(),
-            body: JSON.stringify({
-                error: err.name ? err.name : "Exception",
-                message: err.message ? err.message : "Unknown error"
-            })
+            statusCode,
+            headers,
+            body
         };
     }
 }

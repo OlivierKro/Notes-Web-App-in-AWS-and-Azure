@@ -1,12 +1,8 @@
-/**
- * Route: GET /note/n/{note_id}
- */
+const _ = require('underscore');
+const util = require('./utility_functions.js');
 
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
-
-const _ = require('underscore');
-const util = require('./util.js');
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.NOTES_TABLE;
@@ -17,7 +13,7 @@ exports.handler = async (event) => {
 
         let params = {
             TableName: tableName,
-            IndexName: "note_id-index",
+            IndexName: "Index-note_id",
             KeyConditionExpression: "note_id = :note_id",
             ExpressionAttributeValues: {
                 ":note_id": note_id
@@ -26,27 +22,32 @@ exports.handler = async (event) => {
         };
 
         let data = await dynamodb.query(params).promise();
-        if(!_.isEmpty(data.Items)) {
-            return {
-                statusCode: 200,
-                headers: util.getResponseHeaders(),
-                body: JSON.stringify(data.Items[0])
-            };
-        } else {
-            return {
-                statusCode: 404,
-                headers: util.getResponseHeaders()
-            };
-        }      
+
+        const response = {
+            statusCode: 404,
+            headers: util.getResponseHeaders()
+          };
+          
+          if (!_.isEmpty(data.Items)) {
+            response.statusCode = 200;
+            response.body = JSON.stringify(data.Items[0]);
+          }
+          
+          return response;
+          
     } catch (err) {
         console.log("Error", err);
+        const statusCode = err.statusCode || 500;
+        const headers = util.getResponseHeaders();
+        const body = JSON.stringify({
+            error: err.name || "Exception",
+            message: err.message || "Unknown error"
+        });
+        
         return {
-            statusCode: err.statusCode ? err.statusCode : 500,
-            headers: util.getResponseHeaders(),
-            body: JSON.stringify({
-                error: err.name ? err.name : "Exception",
-                message: err.message ? err.message : "Unknown error"
-            })
+            statusCode,
+            headers,
+            body
         };
     }
 }

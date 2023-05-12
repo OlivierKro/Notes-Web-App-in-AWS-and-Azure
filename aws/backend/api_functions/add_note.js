@@ -1,48 +1,47 @@
-/**
- * Route: POST /note
- */
+const moment = require('moment');
+const { v4: uuidv4 } = require('uuid');
+const util = require('./utility_functions.js');
 
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 
-const moment = require('moment');
-//const uuidv4 = require('uuid/v4');
-//const uuidv4 = require('uuidv4');
-const { v4: uuidv4 } = require('uuid');
-const util = require('./util.js');
-
 const dynamodb = new AWS.DynamoDB.DocumentClient();
-const tableName = process.env.NOTES_TABLE;
+const table = process.env.NOTES_TABLE;
 
 exports.handler = async (event) => {
     try {
-        
         let item = JSON.parse(event.body).Item;
         item.user_name = util.getUserName(event.headers);
         item.note_id = item.user_name + ':' + uuidv4()
         item.time = moment().unix();
-        item.expires = moment().add(90, 'days').unix();
+        item.expires = moment().add(100, 'days').unix();
         
-        let data = await dynamodb.put({
-            TableName: tableName,
+        const params = {
+            TableName: table,
             Item: item
-        }).promise();
-        
-        return {
+        };
+        const data = await dynamodb.put(params).promise();
+
+        const response = {
             statusCode: 200,
             headers: util.getResponseHeaders(),
             body: JSON.stringify(item)
         };
+        return response;
         
     } catch (err) {
         console.log("Error", err);
+        const statusCode = err.statusCode || 500;
+        const headers = util.getResponseHeaders();
+        const body = JSON.stringify({
+            error: err.name || "Exception",
+            message: err.message || "Unknown error"
+        });
+        
         return {
-            statusCode: err.statusCode ? err.statusCode : 500,
-            headers: util.getResponseHeaders(),
-            body: JSON.stringify({
-                error: err.name ? err.name : "Exception",
-                message: err.message ? err.message : "Unknown error"
-            })
+            statusCode,
+            headers,
+            body
         };
     }
 }

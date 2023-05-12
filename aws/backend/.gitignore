@@ -4,5 +4,8 @@ jspm_packages
 
 # Serverless directories
 .serverless
+
+
 opis-serverless-opis.yml
 stare-serverless-copy.yml
+api_functions-opis
