@@ -1,0 +1,120 @@
+service: backend      # nazwa aplikacji
+
+plugins:                  # dodanie pluginów do aplikacji
+  - serverless-offline    # plugin umożliwiający uruchamianie funkcji AWS Lambda lokalnie
+
+custom:                         # defniowanie własnych zmiennych
+  allowedHeaders:               # zezwolone nagłówki
+    - Accept
+    - Content-Type
+    - Content-Length
+    - app_user_id
+    - app_user_name
+
+provider:                   # opis dostawcy chmurowego
+  name: aws                 # nazwa dostawcy
+  runtime: nodejs12.x       # środowisko uruchamiania aplikacji
+  region: eu-central-1      # region
+  stage:  prod              # środowisko, w którym działa aplikacja
+  memorySize: 128           # przypisanie pamięci do funckji
+  timeout:  2               # maksymalny czas trwania funkcji po wykonaniu [s]
+  endpointType: regional    # określenie endpointów API dostępnyhc tylko w danym regionie
+  environment:              # ustawienie zmiennych środowiskowych
+    NOTES_TABLE: ${self:service}-${opt:stage, self:provider.stage}            # ustawienie zmiennej środowiskowej odpowiedzialnej za nazwę tabeli w DynamoDB
+  iamRoleStatements:        # ustawienie polityk IAM
+    - Effect: Allow         # zezwolenie na poniższe akcje a inne są nie dozowlone
+      Action: 
+        - dynamodb:Query          # wykonywanie zapytań
+        - dynamodb:PutItem        # dodawanie elementu
+        - dynamodb:DeleteItem     # usuwanie elementu
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.NOTES_TABLE}"     # zasoby na których polityka jest stosowana (tabela DynamoDB)
+
+functions:                  # definiowanie funkcji w AWS Lambda
+
+  add_note:                           # nazwa funkcji
+    handler: api_functions/add_note.handler     # wskazanie pliku oraz funkcji, która ma zostać wykonana
+    description: POST /note           # opis funkcji
+    events:                           # określenie wydarzenia, które wywołuje funkcję
+      - http:                         # wywołanie funkcji przez protokół HTTP 
+          path: note                  # ścieżka żądania HTTP
+          method: post                # metoda HTTP
+          cors:                       # definicja ustawień cors
+            origin: '*'               # żądanie przejmowane ze wszystkich źródeł
+            headers: ${self:custom.allowedHeaders}      # określenie dozowlonych nagłówków (zmienna allowedHeaders)
+
+  update-note:
+    handler: api/update-note.handler
+    description: PATCH /note
+    events:
+      - http:
+          path: note
+          method: patch
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+  get-notes:
+    handler: api/get-notes.handler
+    description: GET /notes
+    events:
+      - http:
+          path: notes
+          method: get
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+  get-note:
+    handler: api/get-note.handler
+    description: GET /note/n/{note_id}
+    events:
+      - http:
+          path: note/n/{note_id}
+          method: get
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+  delete-note:
+    handler: api/delete-note.handler
+    description: DELETE /note
+    events:
+      - http:
+          path: note/t/{timestamp}
+          method: delete
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+resources:                              # definiowanie zasobów AWS
+  Resources:                            # lista zasobów tworzona za pomocą CloudFormation Stack
+    NotesTable:                         # nazwa tabeli DynamoDB
+      Type: AWS::DynamoDB::Table        # definiowanie typu serwisu i elementu
+      DeletionPolicy: Retain            # zachowanie tabeli z danymi w przypadku usunięcia CloudFormation lub aplikacji
+      Properties:                       # ustawienie parametrów tabeli
+        TableName: ${self:provider.environment.NOTES_TABLE}       # nazwa tabeli
+        AttributeDefinitions:           # definiowanie atrybutów tabeli
+          - AttributeName: user_id      # id użytkownika
+            AttributeType: S            # string
+          - AttributeName: timestamp    # czas
+            AttributeType: N            # int
+          - AttributeName: note_id      # id notatki
+            AttributeType: S            # string
+        KeySchema:                      # definiowanie klucza głównego i klucza sortującego
+          - AttributeName: user_id      # user_id jest kluczem głównym
+            KeyType: HASH               # ustawienie jako klucz główyn
+          - AttributeName: timestamp    # timestamp jest kluczem sortującym
+            KeyType: RANGE              # ustawienie jako klucz sortujący
+        ProvisionedThroughput:          # określenie pozimou przepustowości odczytu/zapisu dla tabeli
+          ReadCapacityUnits: 1          # określenie przepustowości odczytu jako 4 KB
+          WriteCapacityUnits: 1         # określenie przepustowości zapisu jako 4 KB
+        GlobalSecondaryIndexes:         # określenie drugiego globalnego indeksu
+          - IndexName: note_id-index    # drugim globalnym indeksem jest note_id-index
+            KeySchema:
+              - AttributeName: note_id  # atrybut note_id jest drugim kluczem głównym
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL       # wszystkie atrybuty z głównej tabeli będą kopiowane do indeksu
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
