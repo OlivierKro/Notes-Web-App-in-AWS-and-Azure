@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Button from 'react-bootstrap/Button';
 
-const AddNote = () => {
+const AddNote = ({handleAddNote}) => {
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
@@ -16,37 +16,12 @@ const AddNote = () => {
         setDescription(event.target.value);
     }
 
-    const [response, setResponse] = useState(null);
+	const addNote = () => {
+		handleAddNote(title, category, description);
+	}
+      
 
-
-    const handlePostRequest = async () => {
-        const url = "https://su7hcjg6kg.execute-api.eu-central-1.amazonaws.com/prod/note";
-        const headers = {
-          'app_user_name': 'Test_user',
-          'Content-Type': 'application/json'
-        };
-        const body = {
-            "Item": {
-                "title": title,
-                "category": category,
-                "description": description,
-            }
-        };
-    
-        try {
-          const response = await fetch(url, {
-            method: "POST",
-            headers,
-            body: JSON.stringify(body)
-          });
-          const data = await response.json();
-          setResponse(data);
-        } catch (error) {
-          console.error(error);
-        }
-      };
-
-  return (
+  	return (
     <div className="note-new">
         <div className="note-header">
             <form>
@@ -81,7 +56,7 @@ const AddNote = () => {
                 />
             </form>
         </div>
-        <Button className="add-note-button" onClick={handlePostRequest}>
+        <Button className="add-note-button" onClick={addNote}>
             Add note
         </Button>
     </div>

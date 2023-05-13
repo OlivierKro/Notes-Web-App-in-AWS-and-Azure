@@ -1,6 +1,6 @@
 import { MdDeleteForever } from 'react-icons/md';
 
-const Note = (note) => {
+const Note = ({note, handleDeleteNote}) => {
     const date = new Date(note.time * 1000)
 
 	return (
@@ -21,6 +21,7 @@ const Note = (note) => {
 				<MdDeleteForever
 					className="note-footer-delete-icon"
 					size='2em'
+                    onClick={() => handleDeleteNote(note.time)}
 				/>
 			</div>
         </div>
