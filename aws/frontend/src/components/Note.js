@@ -1,20 +1,23 @@
 import { MdDeleteForever } from 'react-icons/md';
 
-const Note = () => {
+const Note = (note) => {
+    const date = new Date(note.time * 1000)
+
 	return (
 		<div className="note">
             <div className="note-header">
                 <h2 className="note-title" >
-                    Tu będzie tytuł notatki
+                    <p>{note.title}</p>
                 </h2>
             </div>
+            <div className="note-category">
+                <p>Category:  {note.category}</p>
+            </div>
             <div className="note-description">
-
+                <p>{note.description}</p>
             </div>
 			<div className='note-footer'>
-				<medium className='note-footer-date'>
-                    12.05.2023
-                </medium>
+                <p className='note-footer-date'>{date.toLocaleDateString()}</p>
 				<MdDeleteForever
 					className="note-footer-delete-icon"
 					size='2em'
