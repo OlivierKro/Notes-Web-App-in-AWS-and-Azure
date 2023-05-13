@@ -25,14 +25,8 @@ provider:
       Action: 
         - dynamodb:Query
         - dynamodb:PutItem
-        - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.NOTES_TABLE}"
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.NOTES_TABLE}/index/*"
       
 
 functions:
@@ -46,16 +40,6 @@ functions:
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
-  update_note:
-    handler: api_functions/update_note.handler
-    description: Update note's data in database
-    events:
-      - http:
-          path: note
-          method: patch
-          cors:
-            origin: '*'
-            headers: ${self:custom.allowedHeaders}
   delete_note:
     handler: api_functions/delete_note.handler
     description: Delete note in database
@@ -63,16 +47,6 @@ functions:
       - http:
           path: note/t/{time}
           method: delete
-          cors:
-            origin: '*'
-            headers: ${self:custom.allowedHeaders}
-  get_note:
-    handler: api_functions/get_note.handler
-    description: Show note by id
-    events:
-      - http:
-          path: note/n/{note_id}
-          method: get
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
@@ -109,13 +83,3 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        GlobalSecondaryIndexes:
-          - IndexName: Index-note_id
-            KeySchema:
-              - AttributeName: note_id
-                KeyType: HASH
-            Projection:
-              ProjectionType: ALL
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
