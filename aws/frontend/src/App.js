@@ -3,24 +3,22 @@ import { useState, useEffect } from 'react';
 import NotesTable from "./components/NotesTable";
 
 const App = () => {
-
-    const [data, setData] = useState([]);
-    const [response, setResponse] = useState(null);
+    const [notes, setNotes] = useState([]);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchNote = async () => {
             const requestOptions = {
                 method: 'GET',
                 headers: { 
-                'app_user_name': 'Test_user',
-                'Content-Type': 'application/json'
+                    'app_user_name': 'Test_user',
+                    'Content-Type': 'application/json'
                 }
             };
             const response = await fetch('https://su7hcjg6kg.execute-api.eu-central-1.amazonaws.com/prod/notes', requestOptions);
             const result = await response.json();
-            setData(result);
+            setNotes(result);
         };
-        fetchData();
+        fetchNote();
     }, []);
 
     const handleRefresh = () => {
@@ -28,11 +26,6 @@ const App = () => {
       };
 
     const addNote = async (title, category, description) => {
-        const url = "https://su7hcjg6kg.execute-api.eu-central-1.amazonaws.com/prod/note";
-        const headers = {
-            'app_user_name': 'Test_user',
-            'Content-Type': 'application/json'
-        };
         const body = {
             "Item": {
                 "title": title,
@@ -40,15 +33,17 @@ const App = () => {
                 "description": description,
             }
         };
+        const requestOptions = {
+            method: "POST",
+            headers: { 
+                'app_user_name': 'Test_user',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        };
     
         try {
-            const response = await fetch(url, {
-            method: "POST",
-            headers,
-            body: JSON.stringify(body)
-        });
-            const data = await response.json();
-            setResponse(data);
+            const response = await fetch('https://su7hcjg6kg.execute-api.eu-central-1.amazonaws.com/prod/note', requestOptions);
         } catch (error) {
             console.error(error);
         }
@@ -56,28 +51,26 @@ const App = () => {
     };
 
 	const deleteNote =  async (time) => {
-        const url = `https://su7hcjg6kg.execute-api.eu-central-1.amazonaws.com/prod/note/t/${time}`;
-        const headers = {
-            'app_user_name': 'Test_user',
-            'Content-Type': 'application/json'
+        const requestOptions = {
+            method: 'DELETE',
+            headers: { 
+                'app_user_name': 'Test_user',
+                'Content-Type': 'application/json'
+            },
         };
+        
         try {
-            const res = await fetch(url, {
-                method: 'DELETE',
-                headers: headers
-            });
+            const res = await fetch(`https://su7hcjg6kg.execute-api.eu-central-1.amazonaws.com/prod/note/t/${time}`, requestOptions);
         } catch (error) {
             console.error(error);
         }
         handleRefresh();
     };
 
-
-
     return (
         <div class="all-notes">
             <NotesTable
-                data={data}
+                notes={notes}
                 handleAddNote={addNote}
                 handleDeleteNote={deleteNote}
             />

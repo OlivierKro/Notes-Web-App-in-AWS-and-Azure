@@ -1,15 +1,15 @@
 import Note from './Note';
 import AddNote from './AddNote';
 
-const NotesTable = ({data, handleAddNote, handleDeleteNote}) => {
+const NotesTable = ({notes, handleAddNote, handleDeleteNote}) => {
   return (
     <div>
       <AddNote
         handleAddNote={handleAddNote}
       />
-      {data.Items && data.Items.length > 0 ? (
+      {notes.Items && notes.Items.length > 0 ? (
         <ul>
-          {data.Items.map(item => (
+          {notes.Items.map(item => (
             <Note
               note={item}
               handleDeleteNote={handleDeleteNote}
