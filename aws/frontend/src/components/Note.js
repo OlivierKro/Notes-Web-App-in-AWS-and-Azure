@@ -11,7 +11,7 @@ const Note = ({note, handleDeleteNote}) => {
                 </h2>
             </div>
             <div className="note-category">
-                <p>Category:  {note.category}</p>
+                <p>{note.category}</p>
             </div>
             <div className="note-description">
                 <p>{note.description}</p>
