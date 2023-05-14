@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import NotesTable from "./components/NotesTable";
 
-const AWS_URL="https://su7hcjg6kg.execute-api.eu-central-1.amazonaws.com/prod"
+const URL="https://su7hcjg6kg.execute-api.eu-central-1.amazonaws.com/prod"
 
 const App = () => {
     const [notes, setNotes] = useState([]);
@@ -16,7 +16,7 @@ const App = () => {
                     'Content-Type': 'application/json'
                 }
             };
-            const response = await fetch(AWS_URL + '/notes', requestOptions);
+            const response = await fetch(URL + '/notes', requestOptions);
             const result = await response.json();
             setNotes(result);
         };
@@ -45,7 +45,7 @@ const App = () => {
         };
     
         try {
-            const response = await fetch(AWS_URL + '/note', requestOptions);
+            const response = await fetch(URL + '/note', requestOptions);
         } catch (error) {
             console.error(error);
         }
@@ -62,7 +62,7 @@ const App = () => {
         };
         
         try {
-            const res = await fetch(AWS_URL + `/note/t/${time}`, requestOptions);
+            const res = await fetch(URL + `/note/t/${time}`, requestOptions);
         } catch (error) {
             console.error(error);
         }
