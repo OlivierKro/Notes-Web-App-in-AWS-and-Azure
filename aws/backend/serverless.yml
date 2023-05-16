@@ -1,0 +1,95 @@
+service: backend
+
+plugins:
+  - serverless-offline
+
+custom:
+  allowedHeaders:
+    - Accept
+    - Content-Type
+    - Content-Length
+    - app_user_name
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: eu-central-1
+  stage:  prod
+  memorySize: 128
+  timeout:  2
+  endpointType: regional
+  environment:
+    NOTES_TABLE: NotesWebApp-Table
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - dynamodb:Query
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.NOTES_TABLE}"
+      
+
+functions:
+  add_note:
+    handler: api_functions/add_note.handler
+    description: Add new note to database
+    events:
+      - http:
+          path: note
+          method: post
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+  delete_note:
+    handler: api_functions/delete_note.handler
+    description: Delete note in database
+    events:
+      - http:
+          path: note/t/{time}
+          method: delete
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+  get_notes:
+    handler: api_functions/get_notes.handler
+    description: List all notes in database
+    events:
+      - http:
+          path: notes
+          method: get
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+resources:
+  Resources:
+    NotesTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${self:provider.environment.NOTES_TABLE}
+        AttributeDefinitions:
+          - AttributeName: note_id
+            AttributeType: S
+          - AttributeName: user_name
+            AttributeType: S
+          - AttributeName: time
+            AttributeType: N
+        KeySchema:
+          - AttributeName: user_name
+            KeyType: HASH
+          - AttributeName: time
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: Index-note_id
+            KeySchema:
+              - AttributeName: note_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
