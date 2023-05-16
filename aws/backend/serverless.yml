@@ -8,7 +8,7 @@ custom:
     - Accept
     - Content-Type
     - Content-Length
-    - app_user_name
+    - Username
 
 provider:
   name: aws
@@ -83,3 +83,13 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: Index-note_id
+            KeySchema:
+              - AttributeName: note_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
