@@ -9,28 +9,45 @@ const endpoint = process.env.AZURE_TABLES_ENDPOINT;
 
 
 module.exports = async function (context, req) {
-    const credential = new AzureNamedKeyCredential(account, accessKey);
-    const tableService = new TableServiceClient(endpoint, credential);
+	try {
+		const credential = new AzureNamedKeyCredential(account, accessKey);
+		const tableService = new TableServiceClient(endpoint, credential);
 
-    await tableService.createTable(tableName);
-    const tableClient = new TableClient(endpoint, tableName, credential);
+		await tableService.createTable(tableName);
+		const tableClient = new TableClient(endpoint, tableName, credential);
 
-    let user_name = util.getUserName(req.headers);
+		let user_name = util.getUserName(req.headers);
 
-    const entities = tableClient.listEntities({
-        queryOptions: { filter: odata`PartitionKey eq ${user_name}` }
-      });
-      
-      const result = [];
+		const entities = tableClient.listEntities({
+			queryOptions: { filter: odata`PartitionKey eq ${user_name}` }
+		});
 
-      for await (const entity of entities) {
-        result.push(entity);
-      }
+		const result = [];
+		for await (const entity of entities) {
+			result.push(entity);
+		}
+		const data = {"Items": result}
 
-      const jsonResult = {"Items": result}
+		context.res = {
+			statusCode: 200,
+			headers: util.getResponseHeaders(),
+			body: data
+		};
+		return context.res;
 
-        context.res = {
-        // status: 200, /* Defaults to 200 */
-            body: jsonResult
-        };
+	} catch (err) {
+		console.log("Error", err);
+		const statusCode = err.statusCode || 500;
+		const headers = util.getResponseHeaders();
+		const body = JSON.stringify({
+			error: err.name || "Exception",
+			message: err.message || "Unknown error"
+		});
+
+		return {
+			statusCode,
+			headers,
+			body
+		};
+	}
 }
