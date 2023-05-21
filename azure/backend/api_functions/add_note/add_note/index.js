@@ -24,13 +24,13 @@ module.exports = async function (context, req) {
 		item.expires = moment().add(100, 'days').unix();
 
 		const params = {
-		partitionKey: item.user_name,
-		rowKey: item.note_id,
-		time: item.time,
-		expires: item.expires,
-		title: item.title,
-		category: item.category,
-		description: item.description
+			partitionKey: item.user_name,
+			rowKey: item.note_id,
+			time: item.time,
+			expires: item.expires,
+			title: item.title,
+			category: item.category,
+			description: item.description
 		};
 
 		let result = await tableClient.createEntity(params);
