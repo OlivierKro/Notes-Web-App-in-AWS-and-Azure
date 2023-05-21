@@ -1,0 +1,14 @@
+{
+  "name": "get_notes",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "@azure/data-tables": "^13.2.2",
+    "azure-storage": "^2.10.7"
+  },
+  "devDependencies": {}
+}
