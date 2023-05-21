@@ -1,4 +1,4 @@
-const util = require('../../utility_functions.js');
+const util = require('../utility_functions.js');
 const azure = require('azure-storage');
 const { TableServiceClient, TableClient, AzureNamedKeyCredential, odata } = require("@azure/data-tables");
 
