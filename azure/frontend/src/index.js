@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 
-const URL="http://localhost:7071/api"
+const URL="https://notes-web-app.azurewebsites.net/api"
 const USERNAME = "Test_user"
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
