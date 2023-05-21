@@ -21,7 +21,7 @@ const Note = ({note, handleDeleteNote}) => {
 				<MdDeleteForever
 					className="note-footer-delete-icon"
 					size='2em'
-					onClick={() => handleDeleteNote(note.time)}
+					onClick={() => handleDeleteNote(note.rowKey)}
 				/>
 			</div>
 		</div>

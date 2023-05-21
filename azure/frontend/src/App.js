@@ -50,7 +50,7 @@ const App = ({url, username}) => {
 		refreshApp();
 	};
 
-	const deleteNote =  async (time) => {
+	const deleteNote =  async (note_id) => {
 		const requestOptions = {
 			method: 'DELETE',
 			headers: { 
@@ -60,7 +60,7 @@ const App = ({url, username}) => {
 		};
 		
 		try {
-			const res = await fetch(url + `/note/t/${time}`, requestOptions);
+			const res = await fetch(url + `/note/n/${note_id}`, requestOptions);
 		} catch (error) {
 			console.error(error);
 		}
