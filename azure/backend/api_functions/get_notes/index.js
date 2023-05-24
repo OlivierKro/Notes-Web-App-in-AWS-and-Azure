@@ -1,5 +1,4 @@
 const util = require('../utility_functions.js');
-const azure = require('azure-storage');
 const { TableServiceClient, TableClient, AzureNamedKeyCredential, odata } = require("@azure/data-tables");
 
 const tableName = process.env.NOTES_TABLE;
@@ -12,12 +11,10 @@ module.exports = async function (context, req) {
 	try {
 		const credential = new AzureNamedKeyCredential(account, accessKey);
 		const tableService = new TableServiceClient(endpoint, credential);
-
 		await tableService.createTable(tableName);
 		const tableClient = new TableClient(endpoint, tableName, credential);
 
 		let user_name = util.getUserName(req.headers);
-
 		const entities = tableClient.listEntities({
 			queryOptions: { filter: odata`PartitionKey eq ${user_name}` }
 		});

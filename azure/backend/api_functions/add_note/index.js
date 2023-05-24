@@ -1,8 +1,7 @@
 const moment = require('moment');
 const { v4: uuidv4 } = require('uuid');
 const util = require('../utility_functions.js');
-const azure = require('azure-storage');
-const { TableServiceClient, TableClient, AzureNamedKeyCredential, odata } = require("@azure/data-tables");
+const { TableServiceClient, TableClient, AzureNamedKeyCredential} = require("@azure/data-tables");
 
 const tableName = process.env.NOTES_TABLE;
 const account = process.env.AZURE_ACCOUNT;
@@ -13,7 +12,6 @@ module.exports = async function (context, req) {
 	try {
 		const credential = new AzureNamedKeyCredential(account, accessKey);
 		const tableService = new TableServiceClient(endpoint, credential);
-
 		await tableService.createTable(tableName);
 		const tableClient = new TableClient(endpoint, tableName, credential);
 
@@ -32,7 +30,6 @@ module.exports = async function (context, req) {
 			category: item.category,
 			description: item.description
 		};
-
 		let result = await tableClient.createEntity(params);
 		
 		const response = {
