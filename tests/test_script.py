@@ -11,16 +11,18 @@ import time
 ##		sys.arg[6]	-->		number of tests
 ##		sys.arg[7]	-->		time interval between tests [s]
 
-def test(path: str, test_number: int):
+def test(path: str, test_number: int, test_type: str):
 	print("-----------------------------------------------------------------------")
 	print(f"                                Test #{test_number}")
 	print("-----------------------------------------------------------------------")
 
-	results_path = fr"{path}\test_#{test_number}"
-	if not os.path.exists(results_path):
-		os.makedirs(results_path)
+	test_path = os.path.join(path, f"test_#{test_number}")
+	if not os.path.exists(test_path):
+		os.makedirs(test_path)
+	summary_path = os.path.join(test_path, 'summary_test.json')
+	results_path = os.path.join(test_path, 'results_test.json')
 
-	command = fr"k6 run --summary-export={results_path}\summary_test.json --out json={results_path}\results_test.json stress.js"
+	command = fr"k6 run --summary-export={summary_path} --out json={results_path} {test_type}.js"
 	os.system(command)
 
 	print("-----------------------------------------------------------------------")
@@ -32,10 +34,12 @@ if __name__ == "__main__":
 	cloud = 'aws'
 	implementation = 'serverless'
 	architecture = 1
-	test_type = 'stress'
-	number_of_tests = 10
-	interval_time = 60 * 5
-	test_title = f'GET-{number_of_tests}-{interval_time}-1000-30'
+	test_type = 'load'
+	number_of_tests = 1
+	interval_time = 60 * 10
+	if number_of_tests == 1:
+		interval_time = 0
+	test_title = f'POST-{number_of_tests}-{interval_time}-30m-25r'
 #	cloud = sys.argv[1]
 #	implementation = sys.argv[2]
 #	architecture = sys.argv[3]
@@ -56,7 +60,7 @@ if __name__ == "__main__":
 		os.makedirs(path)
 
 	for i in range(1, number_of_tests + 1):
-		test(path = path, test_number = i)
+		test(path = path, test_number = i, test_type=test_type)
 		if i != number_of_tests:
 			time.sleep(interval_time)
 
