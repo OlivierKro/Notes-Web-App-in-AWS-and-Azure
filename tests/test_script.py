@@ -34,12 +34,12 @@ if __name__ == "__main__":
 	cloud = 'aws'
 	implementation = 'serverless'
 	architecture = 1
-	test_type = 'load'
+	test_type = 'spike_const'
 	number_of_tests = 1
 	interval_time = 60 * 10
 	if number_of_tests == 1:
 		interval_time = 0
-	test_title = f'POST-{number_of_tests}-{interval_time}-30m-25r'
+	test_title = f'POST-{number_of_tests}-{interval_time}-1m-50r'
 #	cloud = sys.argv[1]
 #	implementation = sys.argv[2]
 #	architecture = sys.argv[3]
