@@ -5,17 +5,29 @@ export const options = {
 	discardResponseBodies: true,
 	scenarios: {
 	  contacts: {
+		exec: 'getNotes',
 		executor: 'constant-arrival-rate',
 		duration: '30m',
 		timeUnit: '1s',
-		rate: 25,
-		preAllocatedVUs: 25,
-		maxVUs: 50
+		rate: 50,
+		preAllocatedVUs: 50,
+		maxVUs: 125
 	  },
 	},
 };
 
-export default function () {
+export function getNotes () {
+	let headers = {
+		'app_user_name': 'Test_user',
+		'Content-Type': 'application/json'
+	};
+	const res = http.get('https://2pkvb43g77.execute-api.eu-central-1.amazonaws.com/prod/notes', { headers: headers });
+//	const res = http.get('https://notes-web-app.azurewebsites.net/api/notes', { headers: headers });
+	check(res, { 'status was 200': (r) => r.status == 200 });
+	sleep(1);
+}
+
+export function addNote () {
 	let headers = {
 		'app_user_name': 'Test_user',
 		'Content-Type': 'application/json'
@@ -28,8 +40,7 @@ export default function () {
 		}
 	};
 	const res = http.post('https://2pkvb43g77.execute-api.eu-central-1.amazonaws.com/prod/note', JSON.stringify(body), { headers: headers });
-	check(res, { 'status was 200': (r) => r.status == 200 });
+//	const res = http.post('https://notes-web-app.azurewebsites.net/api/note', JSON.stringify(body), { headers: headers });
+ 	check(res, { 'status was 200': (r) => r.status == 200 });
 	sleep(1);
 }
-
-

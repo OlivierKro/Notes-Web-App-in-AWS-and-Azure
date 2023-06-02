@@ -6,12 +6,36 @@ export const options = {
 	scenarios: {
 	  contacts: {
 		exec: 'getNotes',
-		executor: 'constant-arrival-rate',
-		duration: '1h',
+		executor: 'ramping-arrival-rate',
+		startRate: 0,
 		timeUnit: '1s',
-		rate: 25,
-		preAllocatedVUs: 25,
-		maxVUs: 60
+		preAllocatedVUs: 0,
+		maxVUs: 1000,
+		stages: [
+			{ target: 50, duration: '25s' },
+			{ target: 50, duration: '10s' },
+			{ target: 0, duration: '25s' },
+			{ target: 0, duration: '4m' },
+
+			{ target: 50, duration: '25s' },
+			{ target: 50, duration: '10s' },
+			{ target: 0, duration: '25s' },
+			{ target: 0, duration: '4m' },
+
+			{ target: 50, duration: '25s' },
+			{ target: 50, duration: '10s' },
+			{ target: 0, duration: '25s' },
+			{ target: 0, duration: '4m' },
+
+			{ target: 50, duration: '25s' },
+			{ target: 50, duration: '10s' },
+			{ target: 0, duration: '25s' },
+			{ target: 0, duration: '4m' },
+
+			{ target: 50, duration: '25s' },
+			{ target: 50, duration: '10s' },
+			{ target: 0, duration: '25s' },
+		]
 	  },
 	},
 };
@@ -44,5 +68,3 @@ export function addNote () {
  	check(res, { 'status was 200': (r) => r.status == 200 });
 	sleep(1);
 }
-
-

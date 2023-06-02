@@ -7,11 +7,11 @@ export const options = {
 	  contacts: {
 		exec: 'getNotes',
 		executor: 'constant-arrival-rate',
-		duration: '1h',
+		duration: '10m',
 		timeUnit: '1s',
-		rate: 25,
-		preAllocatedVUs: 25,
-		maxVUs: 60
+		rate: 175,
+		preAllocatedVUs: 175,
+		maxVUs: 350
 	  },
 	},
 };
@@ -44,5 +44,3 @@ export function addNote () {
  	check(res, { 'status was 200': (r) => r.status == 200 });
 	sleep(1);
 }
-
-
