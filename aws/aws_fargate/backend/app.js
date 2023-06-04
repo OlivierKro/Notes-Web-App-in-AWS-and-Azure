@@ -5,9 +5,13 @@ const cors = require('cors');
 const moment = require('moment');
 const { v4: uuidv4 } = require('uuid');
 
+require('dotenv').config()
 
 const AWS = require('aws-sdk');
-AWS.config.update({ region: 'eu-central-1' });
+AWS.config.update({       
+	accessKeyId: process.env.ACCESS_KEY_ID,
+	secretAccessKey: process.env.SECRET_ACCESS_KEY,
+	region: 'eu-central-1' });
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 const tableName = "NotesWebApp-Table";
@@ -139,6 +143,6 @@ app.delete('/note/t/:time', async (req, res) => {
 	}
 });
 
-app.listen(4000, () => {
-    console.log('Server started on port 4000');
+app.listen(80, () => {
+    console.log('Server started on port 80');
   });
