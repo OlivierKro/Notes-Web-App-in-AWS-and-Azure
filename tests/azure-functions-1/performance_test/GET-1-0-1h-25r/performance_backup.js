@@ -1,0 +1,28 @@
+import http from 'k6/http';
+import { check, sleep, data } from 'k6';
+
+export const options = {
+	discardResponseBodies: true,
+	scenarios: {
+	  contacts: {
+		executor: 'constant-arrival-rate',
+		duration: '1h',
+		timeUnit: '1s',
+		rate: 25,
+		preAllocatedVUs: 25,
+		maxVUs: 50
+	  },
+	},
+};
+
+export default function () {
+	let headers = {
+		'app_user_name': 'Test_user',
+		'Content-Type': 'application/json'
+	};
+	const res = http.get('https://notes-web-app.azurewebsites.net/api/notes', { headers: headers });
+	check(res, { 'status was 200': (r) => r.status == 200 });
+	sleep(1);
+}
+
+
