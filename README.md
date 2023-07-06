@@ -6,6 +6,8 @@ Projcet consisted in developing a web application and implementing it using vari
 
 ## Technology
 Project is created with:
+* AWS
+* Azure
 * Node.js - backend
 * React - frontend
 * Docker - implementation using container
@@ -14,6 +16,10 @@ Project is created with:
 * Python - test automation script
 * Matplotlib - visualization of test results
 
+## Web application
+The created web application is designed to manage notes in the database. You can add, delete and view notes. The frontend was created using React and the backend using Node.js
+
+![WebApp](./Images/WebApp.png)
 
 ## Implementation
 As part of the project, 4 implementations were made, two for each cloud. The frontend was implemented using a NoSQL database (Amazon S3, Azure Blob Storage). The backend was implemented using FaaS service (AWS Lambda, Azure Functions) and containers (AWS Fargate, Azure Container Instances).
