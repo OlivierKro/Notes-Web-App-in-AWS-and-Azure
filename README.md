@@ -17,7 +17,7 @@ Project is created with:
 * Matplotlib - visualization of test results
 
 ## Web application
-The created web application is designed to manage notes in the database. You can add, delete and view notes. The frontend was created using React and the backend using Node.js
+The created web application is designed to manage notes in the database. You can add, delete and view notes. The frontend was created using React and the backend using Node.js.
 
 ![WebApp](./Images/WebApp.png)
 
