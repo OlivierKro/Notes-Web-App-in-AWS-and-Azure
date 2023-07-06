@@ -10,31 +10,31 @@ export const options = {
 		startRate: 0,
 		timeUnit: '1s',
 		preAllocatedVUs: 0,
-		maxVUs: 1000,
+		maxVUs: 1720,
 		stages: [
-			{ target: 50, duration: '25s' },
-			{ target: 50, duration: '10s' },
-			{ target: 0, duration: '25s' },
+			{ target: 172, duration: '5s' },
+			{ target: 172, duration: '50s' },
+			{ target: 0, duration: '5s' },
 			{ target: 0, duration: '4m' },
 
-			{ target: 50, duration: '25s' },
-			{ target: 50, duration: '10s' },
-			{ target: 0, duration: '25s' },
+			{ target: 172, duration: '5s' },
+			{ target: 172, duration: '50s' },
+			{ target: 0, duration: '5s' },
 			{ target: 0, duration: '4m' },
 
-			{ target: 50, duration: '25s' },
-			{ target: 50, duration: '10s' },
-			{ target: 0, duration: '25s' },
+			{ target: 172, duration: '5s' },
+			{ target: 172, duration: '50s' },
+			{ target: 0, duration: '5s' },
 			{ target: 0, duration: '4m' },
 
-			{ target: 50, duration: '25s' },
-			{ target: 50, duration: '10s' },
-			{ target: 0, duration: '25s' },
+			{ target: 172, duration: '5s' },
+			{ target: 172, duration: '50s' },
+			{ target: 0, duration: '5s' },
 			{ target: 0, duration: '4m' },
 
-			{ target: 50, duration: '25s' },
-			{ target: 50, duration: '10s' },
-			{ target: 0, duration: '25s' },
+			{ target: 172, duration: '5s' },
+			{ target: 172, duration: '50s' },
+			{ target: 0, duration: '5s' }
 		]
 	  },
 	},
@@ -45,7 +45,9 @@ export function getNotes () {
 		'app_user_name': 'Test_user',
 		'Content-Type': 'application/json'
 	};
-	const res = http.get('https://2pkvb43g77.execute-api.eu-central-1.amazonaws.com/prod/notes', { headers: headers });
+//	const res = http.get('https://2pkvb43g77.execute-api.eu-central-1.amazonaws.com/prod/notes', { headers: headers });
+//	const res = http.get('http://3.68.221.34/notes', { headers: headers });
+	const res = http.get('https://notes-webapp.lemonflower-c4cb3782.germanywestcentral.azurecontainerapps.io/notes', { headers: headers });
 //	const res = http.get('https://notes-web-app.azurewebsites.net/api/notes', { headers: headers });
 	check(res, { 'status was 200': (r) => r.status == 200 });
 	sleep(1);
@@ -63,8 +65,8 @@ export function addNote () {
 			"description": "Stress test on cloud",
 		}
 	};
-	const res = http.post('https://2pkvb43g77.execute-api.eu-central-1.amazonaws.com/prod/note', JSON.stringify(body), { headers: headers });
-//	const res = http.post('https://notes-web-app.azurewebsites.net/api/note', JSON.stringify(body), { headers: headers });
+//	const res = http.post('http://3.68.221.34/note', JSON.stringify(body), { headers: headers });
+	const res = http.post('https://notes-webapp.lemonflower-c4cb3782.germanywestcentral.azurecontainerapps.io/note', JSON.stringify(body), { headers: headers });
  	check(res, { 'status was 200': (r) => r.status == 200 });
 	sleep(1);
 }
