@@ -5,13 +5,37 @@ export const options = {
 	discardResponseBodies: true,
 	scenarios: {
 	  contacts: {
-		exec: 'addNote',
-		executor: 'constant-arrival-rate',
-		duration: '10m',
+		exec: 'getNotes',
+		executor: 'ramping-arrival-rate',
+		startRate: 0,
 		timeUnit: '1s',
-		rate: 125,
-		preAllocatedVUs: 125,
-		maxVUs: 2000
+		preAllocatedVUs: 0,
+		maxVUs: 1400,
+		stages: [
+			{ target: 140, duration: '5s' },
+			{ target: 140, duration: '50s' },
+			{ target: 0, duration: '5s' },
+			{ target: 0, duration: '4m' },
+
+			{ target: 140, duration: '5s' },
+			{ target: 140, duration: '50s' },
+			{ target: 0, duration: '5s' },
+			{ target: 0, duration: '4m' },
+
+			{ target: 140, duration: '5s' },
+			{ target: 140, duration: '50s' },
+			{ target: 0, duration: '5s' },
+			{ target: 0, duration: '4m' },
+
+			{ target: 140, duration: '5s' },
+			{ target: 140, duration: '50s' },
+			{ target: 0, duration: '5s' },
+			{ target: 0, duration: '4m' },
+
+			{ target: 140, duration: '5s' },
+			{ target: 140, duration: '50s' },
+			{ target: 0, duration: '5s' }
+		]
 	  },
 	},
 };
@@ -41,10 +65,8 @@ export function addNote () {
 			"description": "Stress test on cloud",
 		}
 	};
-//	const res = http.post('https://2pkvb43g77.execute-api.eu-central-1.amazonaws.com/prod/note', JSON.stringify(body), { headers: headers });
 //	const res = http.post('http://3.68.221.34/note', JSON.stringify(body), { headers: headers });
 	const res = http.post('https://notes-webapp.lemonflower-c4cb3782.germanywestcentral.azurecontainerapps.io/note', JSON.stringify(body), { headers: headers });
-//	const res = http.post('https://notes-web-app.azurewebsites.net/api/note', JSON.stringify(body), { headers: headers });
-	check(res, { 'status was 200': (r) => r.status == 200 });
+ 	check(res, { 'status was 200': (r) => r.status == 200 });
 	sleep(1);
 }

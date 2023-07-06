@@ -8,10 +8,10 @@ export const options = {
 		exec: 'addNote',
 		executor: 'constant-arrival-rate',
 		duration: '10m',
-		timeUnit: '1s',
-		rate: 125,
-		preAllocatedVUs: 125,
-		maxVUs: 2000
+		timeUnit: '4s',
+		rate: 7,
+		preAllocatedVUs: 7,
+		maxVUs: 1000
 	  },
 	},
 };
@@ -21,10 +21,10 @@ export function getNotes () {
 		'app_user_name': 'Test_user',
 		'Content-Type': 'application/json'
 	};
-//	const res = http.get('https://2pkvb43g77.execute-api.eu-central-1.amazonaws.com/prod/notes', { headers: headers });
+	const res = http.get('https://2pkvb43g77.execute-api.eu-central-1.amazonaws.com/prod/notes', { headers: headers });
 //	const res = http.get('http://3.68.221.34/notes', { headers: headers });
 //	const res = http.get('https://notes-webapp.lemonflower-c4cb3782.germanywestcentral.azurecontainerapps.io/notes', { headers: headers });
-	const res = http.get('https://notes-web-app.azurewebsites.net/api/notes', { headers: headers });
+//	const res = http.get('https://notes-web-app.azurewebsites.net/api/test/notes', { headers: headers });
 	check(res, { 'status was 200': (r) => r.status == 200 });
 	sleep(1);
 }
@@ -41,9 +41,9 @@ export function addNote () {
 			"description": "Stress test on cloud",
 		}
 	};
-//	const res = http.post('https://2pkvb43g77.execute-api.eu-central-1.amazonaws.com/prod/note', JSON.stringify(body), { headers: headers });
+	const res = http.post('https://2pkvb43g77.execute-api.eu-central-1.amazonaws.com/prod/note', JSON.stringify(body), { headers: headers });
 //	const res = http.post('http://3.68.221.34/note', JSON.stringify(body), { headers: headers });
-	const res = http.post('https://notes-webapp.lemonflower-c4cb3782.germanywestcentral.azurecontainerapps.io/note', JSON.stringify(body), { headers: headers });
+//	const res = http.post('https://notes-webapp.lemonflower-c4cb3782.germanywestcentral.azurecontainerapps.io/note', JSON.stringify(body), { headers: headers });
 //	const res = http.post('https://notes-web-app.azurewebsites.net/api/note', JSON.stringify(body), { headers: headers });
 	check(res, { 'status was 200': (r) => r.status == 200 });
 	sleep(1);
