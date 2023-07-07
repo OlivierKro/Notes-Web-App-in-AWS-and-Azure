@@ -40,3 +40,5 @@ Performance tests were performed using the k6s tool. As part of the tests, the f
 * stress tests
 * breakepoint tests
 * spike tests
+
+Copyright ⓒ 2023 Olivier Kroll
